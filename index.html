@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Uscite">
+<link rel="apple-touch-icon" href="icona.png">
 <title>Preventivatore Intervento</title>
 <style>
 :root{--bg:#eef0ee;--card:#fff;--fg:#1b2420;--mut:#5d6b64;--line:#d3dad5;--go:#1f6f4a;--mid:#b4620a;--end:#1b2420;--endfg:#fff;--gofg:#fff}
@@ -18,10 +22,10 @@ input[type=number],input[type=text]{width:100%;padding:10px;font-size:16px;borde
 .chk{display:flex;align-items:center;gap:10px;margin-top:12px}
 .chk input{width:22px;height:22px}
 .chk label{margin:0;text-transform:none;font-size:16px;letter-spacing:0;color:var(--fg)}
-button{width:100%;padding:18px;font-size:18px;font-weight:700;border:0;border-radius:10px;margin-top:8px;cursor:pointer;color:var(--gofg);background:var(--go)}
+button{width:100%;min-height:84px;padding:26px 18px;font-size:24px;font-weight:700;border:0;border-radius:14px;margin-top:14px;touch-action:manipulation;cursor:pointer;color:var(--gofg);background:var(--go)}
 button.b2{background:var(--mid)}
 button.b3{background:var(--end);color:var(--endfg)}
-button.ghost{background:transparent;color:var(--fg);border:1px solid var(--line);font-size:15px;padding:12px}
+button.ghost{background:transparent;color:var(--fg);border:1px solid var(--line);font-size:17px;padding:14px;min-height:56px}
 button:disabled{opacity:.3;cursor:default}
 #stato{font-weight:700;margin-bottom:4px}
 .note{font-size:13px;color:var(--mut);line-height:1.5;margin-top:8px}
