@@ -5,63 +5,98 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Uscite">
+<meta name="theme-color" content="#F2F2F7">
 <link rel="apple-touch-icon" href="icona.png">
 <title>Preventivatore Intervento</title>
 <style>
-:root{--bg:#eef0ee;--card:#fff;--fg:#1b2420;--mut:#5d6b64;--line:#d3dad5;--go:#1f6f4a;--mid:#b4620a;--end:#1b2420;--endfg:#fff;--gofg:#fff}
-@media (prefers-color-scheme:dark){:root{--bg:#121816;--card:#1b2420;--fg:#e8eeea;--mut:#9aa8a0;--line:#2e3a34;--go:#3fae78;--mid:#e08a2c;--end:#e8eeea;--endfg:#121816;--gofg:#0e1512;color-scheme:dark}}
-*{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font-family:-apple-system,system-ui,Arial,sans-serif;font-size:16px;margin:0 auto;max-width:520px;padding:16px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
-h1{font-size:22px;margin:0 0 14px}
-section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
-.row{display:flex;gap:8px;flex-wrap:wrap}
-.row>div{flex:1 1 90px;min-width:0}
-label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--mut);margin:8px 0 4px}
-input[type=number],input[type=text]{width:100%;padding:10px;font-size:16px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg)}
-.chk{display:flex;align-items:center;gap:10px;margin-top:12px}
-.chk input{width:22px;height:22px}
-.chk label{margin:0;text-transform:none;font-size:16px;letter-spacing:0;color:var(--fg)}
-button{width:100%;min-height:84px;padding:26px 18px;font-size:24px;font-weight:700;border:0;border-radius:14px;margin-top:14px;touch-action:manipulation;cursor:pointer;color:var(--gofg);background:var(--go)}
-button.b2{background:var(--mid)}
-button.b3{background:var(--end);color:var(--endfg)}
-button.ghost{background:transparent;color:var(--fg);border:1px solid var(--line);font-size:17px;padding:14px;min-height:56px}
+:root{--bg:#F2F2F7;--card:#FFFFFF;--fg:#1C1C1E;--mut:#6C6C70;--line:#E5E5EA;--blu:#007AFF;--ara:#FF9500;--ver:#34C759;--dark:#1C1C1E}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.35;margin:0 auto;max-width:520px;
+  padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+h1{font-size:28px;font-weight:700;letter-spacing:-.02em;margin:4px 4px 14px}
+section{background:var(--card);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.05),0 4px 14px rgba(0,0,0,.05)}
+label{display:block;font-size:13px;color:var(--mut);margin:12px 0 6px}
+input[type=number],input[type=text]{width:100%;min-height:44px;padding:10px 12px;font-size:17px;font-family:inherit;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg);-webkit-appearance:none;appearance:none}
+input[type=number]:focus,input[type=text]:focus{outline:2px solid var(--blu);outline-offset:0;border-color:transparent}
+
+/* stato */
+#stato{display:block;width:fit-content;margin:0 auto 14px;padding:8px 18px;border-radius:999px;background:#E5F1FF;color:#0058B8;font-size:16px;font-weight:700;text-align:center}
+
+/* pulsanti principali */
+button{display:block;width:100%;min-height:68px;padding:16px;font-family:inherit;font-size:18px;font-weight:700;letter-spacing:.01em;border:0;border-radius:14px;margin-top:12px;cursor:pointer;color:#fff;background:var(--blu);touch-action:manipulation;-webkit-appearance:none;appearance:none;transition:transform .08s,opacity .15s}
+#bParti{margin-top:0}
+button.b2{background:var(--ara)}
+button.b3{background:var(--ver)}
+button:active:not(:disabled){transform:scale(.98);opacity:.85}
 button:disabled{opacity:.3;cursor:default}
-#stato{font-weight:700;margin-bottom:4px;text-align:center;font-size:18px}
-.tasti{display:flex;flex-direction:column;justify-content:space-between;min-height:calc(100vh - 32px);min-height:calc(100dvh - 32px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));background:transparent;border:0;padding:0}
-.tasti button{min-height:22vh;font-size:30px;margin:0}
-.tasti .note{text-align:center;min-height:20px}
-.note{font-size:13px;color:var(--mut);line-height:1.5;margin-top:8px}
-.tot{font-size:40px;font-weight:700;text-align:center;margin:4px 0 10px}
+.note{font-size:14px;color:var(--mut);line-height:1.45;margin-top:10px;text-align:center}
+#live:empty{display:none}
+
+/* switch iOS */
+.chk{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.chk label{order:-1;flex:1;margin:0;font-size:17px;color:var(--fg);padding:6px 0}
+.chk input{flex:none;width:51px;height:31px;margin:0;border-radius:31px;background:#E9E9EA;position:relative;cursor:pointer;-webkit-appearance:none;appearance:none;transition:background .2s}
+.chk input::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.25);transition:transform .2s}
+.chk input:checked{background:var(--ver)}
+.chk input:checked::after{transform:translateX(20px)}
+
+/* menu espandibili */
+details{border-top:1px solid var(--line);margin-top:14px}
+summary{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding-top:4px;font-size:16px;color:var(--blu);cursor:pointer;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"";width:9px;height:9px;margin-right:4px;border-right:2px solid #C7C7CC;border-bottom:2px solid #C7C7CC;transform:rotate(45deg);transition:transform .2s}
+details[open] summary::after{transform:rotate(-135deg)}
+details label{margin-top:4px}
+.row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding-bottom:4px}
+.row>div{min-width:0}
+.row label{margin-top:0;white-space:nowrap;font-size:12px}
+
+/* risultato */
+#res{background:var(--dark);color:#fff;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+#res .note{color:#AEAEB2;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.tot{font-size:46px;font-weight:700;letter-spacing:-.02em;text-align:center;margin:6px 0 14px}
 table{width:100%;border-collapse:collapse;font-size:15px}
-td{padding:6px 0;border-top:1px solid var(--line)}
+td{padding:9px 0;border-top:1px solid #3A3A3C;vertical-align:top}
+td:first-child{color:#AEAEB2;padding-right:10px}
 td:last-child{text-align:right}
+button.ghost{min-height:48px;margin-top:16px;padding:12px;font-size:16px;font-weight:600;background:transparent;color:#fff;border:1px solid #48484A}
 [hidden]{display:none!important}
 </style>
 </head>
 <body>
 
-<section class="tasti">
+<h1>Intervento</h1>
+
+<section>
+  <div id="stato">Pronto.</div>
   <button id="bParti">1. PARTO</button>
-  <div>
-    <div id="stato">Pronto.</div>
-    <button class="b2" id="bArrivo" disabled>2. SONO ARRIVATO</button>
-    <div class="note" id="live"></div>
-  </div>
+  <button class="b2" id="bArrivo" disabled>2. SONO ARRIVATO</button>
   <button class="b3" id="bFine" disabled>3. HO FINITO</button>
+  <div class="note" id="live"></div>
 </section>
 
 <section>
-  <div class="row" hidden>
-    <div><label for="tKm">€ al km</label><input type="number" id="tKm" value="1" step="0.1" inputmode="decimal"></div>
-    <div><label for="tOra">€/ora tu</label><input type="number" id="tOra" value="40" inputmode="decimal"></div>
-    <div><label for="tOp">€/ora operaio</label><input type="number" id="tOp" value="30" inputmode="decimal"></div>
-  </div>
-  <div class="chk" style="margin-top:0"><input type="checkbox" id="conOp"><label for="conOp">Vado con un operaio</label></div>
+  <div class="chk"><input type="checkbox" id="conOp"><label for="conOp">Vado con un operaio</label></div>
   <label for="cliente">Cliente</label>
   <input type="text" id="cliente" placeholder="Nome cliente">
-  <label for="kmMan">Km di sola andata (solo se il GPS non funziona)</label>
-  <input type="number" id="kmMan" step="0.1" placeholder="es. 12" inputmode="decimal">
+
+  <details>
+    <summary>Inserisci km manualmente</summary>
+    <label for="kmMan">Km di sola andata (solo se il GPS non funziona)</label>
+    <input type="number" id="kmMan" step="0.1" placeholder="es. 12" inputmode="decimal">
+  </details>
+
+  <details>
+    <summary>Impostazioni tariffe</summary>
+    <div class="row">
+      <div><label for="tKm">€ al km</label><input type="number" id="tKm" value="1" step="0.1" inputmode="decimal"></div>
+      <div><label for="tOra">€/ora tu</label><input type="number" id="tOra" value="40" inputmode="decimal"></div>
+      <div><label for="tOp">€/ora operaio</label><input type="number" id="tOp" value="30" inputmode="decimal"></div>
+    </div>
+  </details>
 </section>
 
 <section id="res" hidden>
