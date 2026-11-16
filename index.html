@@ -49,6 +49,12 @@ button:disabled{opacity:.3;cursor:default}
 .chk input:checked{background:var(--ver)}
 .chk input:checked::after{transform:translateX(20px)}
 
+/* numero operai: tasti + e - */
+.passo{display:flex;align-items:center;gap:14px;min-height:52px;margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+.passo>span:first-child{flex:1}
+.passo .num{min-width:28px;text-align:center;font-size:20px;font-weight:700}
+button.step{display:block;flex:none;width:48px;min-height:48px;height:48px;margin:0;padding:0;border-radius:12px;font-size:26px;line-height:1;background:#FBF5E4;color:var(--fg);border:1.5px solid var(--oro)}
+
 /* menu espandibili */
 details{border-top:1px solid var(--line);margin-top:14px}
 summary{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding-top:4px;font-size:16px;color:#8A6A12;cursor:pointer;list-style:none}
@@ -96,6 +102,12 @@ button.ghost{min-height:48px;margin:4px 0 0;padding:12px;font-size:16px;font-wei
 
 <section>
   <div class="chk"><input type="checkbox" id="conOp"><label for="conOp">Vado con un operaio</label></div>
+  <div class="passo" id="opRow" hidden>
+    <span>Numero operai</span>
+    <button type="button" class="step" id="bOpMeno" aria-label="Un operaio in meno">−</button>
+    <span class="num" id="nOp">1</span>
+    <button type="button" class="step" id="bOpPiu" aria-label="Un operaio in più">+</button>
+  </div>
   <label for="cliente">Cliente</label>
   <input type="text" id="cliente" placeholder="Nome cliente">
 
@@ -196,6 +208,7 @@ $('bFine').onclick = () => {
   S.tOra = +$('tOra').value;
   S.tOp = +$('tOp').value;
   S.conOp = $('conOp').checked;
+  S.nOp = nOp;
   S.cliente = $('cliente').value;
   S.kmMan = parseFloat($('kmMan').value);
   S.iva = $('conIva').checked;
@@ -214,6 +227,18 @@ $('bNuovo').onclick = () => {
   $('kmMan').value = '';
   ui();
 };
+
+// numero operai: tasti + e - (da 1 a 9), visibili solo con "Vado con un operaio"
+let nOp = S.nOp || 1;
+function opUi() {
+  $('opRow').hidden = !$('conOp').checked;
+  $('nOp').textContent = nOp;
+  $('bOpMeno').disabled = nOp <= 1;
+  $('bOpPiu').disabled = nOp >= 9;
+}
+$('conOp').onchange = opUi;
+$('bOpMeno').onclick = () => { if (nOp > 1) nOp--; opUi(); };
+$('bOpPiu').onclick = () => { if (nOp < 9) nOp++; opUi(); };
 
 // IVA: ricalcola il totale mostrato
 $('conIva').onchange = () => {
@@ -258,7 +283,8 @@ function mostra() {
   const oreC = Math.max(0.25, Math.ceil(ore * 4) / 4);    // arrotondato al quarto d'ora
   const cKm = km * S.tKm;
   const cL = oreC * S.tOra;
-  const cO = S.conOp ? oreC * S.tOp : 0;
+  const quanti = S.conOp ? (S.nOp || 1) : 0;              // numero operai
+  const cO = oreC * S.tOp * quanti;
 
   const netto = cKm + cL + cO;
   const iva = !!S.iva;
@@ -283,7 +309,7 @@ function mostra() {
   riga('Km andata+ritorno (' + fonte + ')', km.toFixed(1) + ' km · ' + eur(cKm));
   riga('Tempo al lavoro', fmt(S.t2 - S.t1) + ' (conteggiate ' + oreC.toFixed(2) + ' h)');
   riga('Manodopera tua', eur(cL));
-  if (S.conOp) riga('Operaio', eur(cO));
+  if (S.conOp) riga(quanti > 1 ? 'Operai (' + quanti + ')' : 'Operaio', eur(cO));
   $('res').hidden = false;
   $('ivaBox').hidden = false;
   $('invia').hidden = false;
@@ -295,6 +321,7 @@ $('tKm').value = S.tKm || 1;
 $('tOra').value = S.tOra || 40;
 $('tOp').value = S.tOp || 30;
 $('conOp').checked = !!S.conOp;
+opUi();
 $('cliente').value = S.cliente || '';
 if (S.kmMan > 0) $('kmMan').value = S.kmMan;
 $('conIva').checked = !!S.iva;
