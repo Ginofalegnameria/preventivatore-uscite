@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Preventivatore Intervento</title>
+<style>
+:root{--bg:#eef0ee;--card:#fff;--fg:#1b2420;--mut:#5d6b64;--line:#d3dad5;--go:#1f6f4a;--mid:#b4620a;--end:#1b2420;--endfg:#fff;--gofg:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#121816;--card:#1b2420;--fg:#e8eeea;--mut:#9aa8a0;--line:#2e3a34;--go:#3fae78;--mid:#e08a2c;--end:#e8eeea;--endfg:#121816;--gofg:#0e1512;color-scheme:dark}}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,system-ui,Arial,sans-serif;font-size:16px;margin:0 auto;max-width:520px;padding:16px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
+h1{font-size:22px;margin:0 0 14px}
+section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>div{flex:1 1 90px;min-width:0}
+label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--mut);margin:8px 0 4px}
+input[type=number],input[type=text]{width:100%;padding:10px;font-size:16px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg)}
+.chk{display:flex;align-items:center;gap:10px;margin-top:12px}
+.chk input{width:22px;height:22px}
+.chk label{margin:0;text-transform:none;font-size:16px;letter-spacing:0;color:var(--fg)}
+button{width:100%;padding:18px;font-size:18px;font-weight:700;border:0;border-radius:10px;margin-top:8px;cursor:pointer;color:var(--gofg);background:var(--go)}
+button.b2{background:var(--mid)}
+button.b3{background:var(--end);color:var(--endfg)}
+button.ghost{background:transparent;color:var(--fg);border:1px solid var(--line);font-size:15px;padding:12px}
+button:disabled{opacity:.3;cursor:default}
+#stato{font-weight:700;margin-bottom:4px}
+.note{font-size:13px;color:var(--mut);line-height:1.5;margin-top:8px}
+.tot{font-size:40px;font-weight:700;text-align:center;margin:4px 0 10px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td{padding:6px 0;border-top:1px solid var(--line)}
+td:last-child{text-align:right}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<h1>Preventivatore Intervento</h1>
+
+<section>
+  <div class="row">
+    <div><label for="tKm">€ al km</label><input type="number" id="tKm" value="1" step="0.1" inputmode="decimal"></div>
+    <div><label for="tOra">€/ora tu</label><input type="number" id="tOra" value="40" inputmode="decimal"></div>
+    <div><label for="tOp">€/ora operaio</label><input type="number" id="tOp" value="30" inputmode="decimal"></div>
+  </div>
+  <div class="chk"><input type="checkbox" id="conOp"><label for="conOp">Vado con un operaio</label></div>
+  <label for="cliente">Cliente</label>
+  <input type="text" id="cliente" placeholder="Nome cliente">
+</section>
+
+<section>
+  <div id="stato">Pronto.</div>
+  <button id="bParti">1. PARTO</button>
+  <button class="b2" id="bArrivo" disabled>2. SONO ARRIVATO</button>
+  <label for="kmMan">Km di sola andata (solo se il GPS non funziona)</label>
+  <input type="number" id="kmMan" step="0.1" placeholder="es. 12" inputmode="decimal">
+  <button class="b3" id="bFine" disabled>3. HO FINITO</button>
+  <div class="note" id="live"></div>
+</section>
+
+<section id="res" hidden>
+  <div class="note" style="margin:0">Da chiedere al cliente</div>
+  <div class="tot" id="tot">0 €</div>
+  <table id="dett"></table>
+  <button class="ghost" id="bNuovo">Nuovo intervento</button>
+</section>
+
+<script>
+const $ = id => document.getElementById(id);
+let S = { fase: 0 };
+try { S = JSON.parse(localStorage.getItem('prev') || 'null') || { fase: 0 }; } catch (e) {}
+function salva() { try { localStorage.setItem('prev', JSON.stringify(S)); } catch (e) {} }
+
+function dist(a, b) {
+  const R = 6371, r = x => x * Math.PI / 180;
+  const dl = r(b.lat - a.lat), dn = r(b.lon - a.lon);
+  const h = Math.sin(dl / 2) ** 2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(dn / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+function pos() {
+  return new Promise(ok => {
+    if (!navigator.geolocation) { ok(null); return; }
+    try {
+      navigator.geolocation.getCurrentPosition(
+        p => ok({ lat: p.coords.latitude, lon: p.coords.longitude }),
+        () => ok(null),
+        { enableHighAccuracy: true, timeout: 15000 }
+      );
+    } catch (e) { ok(null); }
+  });
+}
+
+const fmt = ms => { const m = Math.round(ms / 60000); return Math.floor(m / 60) + ' h ' + (m % 60) + ' min'; };
+const eur = n => n.toFixed(2).replace('.', ',') + ' €';
+
+function ui() {
+  $('bParti').disabled = S.fase !== 0;
+  $('bArrivo').disabled = S.fase !== 1;
+  $('bFine').disabled = S.fase !== 2;
+  $('stato').textContent = ['Pronto.', 'In viaggio...', 'Al lavoro...', 'Finito.'][S.fase];
+  if (S.fase === 3) mostra();
+}
+
+$('bParti').onclick = async () => {
+  $('stato').textContent = 'Rilevo posizione...';
+  S.p0 = await pos();
+  S.t0 = Date.now();
+  S.fase = 1;
+  salva(); ui();
+  $('live').textContent = S.p0 ? 'Posizione di partenza rilevata.' : 'GPS non disponibile: scrivi i km di sola andata.';
+};
+
+$('bArrivo').onclick = async () => {
+  $('stato').textContent = 'Rilevo posizione...';
+  S.p1 = await pos();
+  S.t1 = Date.now();
+  S.fase = 2;
+  salva(); ui();
+  $('live').textContent = S.p1 ? 'Posizione di arrivo rilevata.' : 'GPS non disponibile: scrivi i km di sola andata.';
+};
+
+$('bFine').onclick = () => {
+  S.t2 = Date.now();
+  S.fase = 3;
+  S.tKm = +$('tKm').value;
+  S.tOra = +$('tOra').value;
+  S.tOp = +$('tOp').value;
+  S.conOp = $('conOp').checked;
+  S.cliente = $('cliente').value;
+  S.kmMan = parseFloat($('kmMan').value);
+  salva(); ui();
+};
+
+$('bNuovo').onclick = () => {
+  S = { fase: 0 };
+  salva();
+  $('res').hidden = true;
+  $('live').textContent = '';
+  $('kmMan').value = '';
+  ui();
+};
+
+function mostra() {
+  let kmUno = 0, fonte = 'mancanti';
+  if (S.kmMan > 0) { kmUno = S.kmMan; fonte = 'inseriti da te'; }
+  else if (S.p0 && S.p1) { kmUno = dist(S.p0, S.p1) * 1.25; fonte = 'stimati dal GPS'; }
+
+  const km = kmUno * 2;                                   // andata e ritorno
+  const ore = (S.t2 - S.t1) / 3600000;                    // tempo al lavoro
+  const oreC = Math.max(0.25, Math.ceil(ore * 4) / 4);    // arrotondato al quarto d'ora
+  const cKm = km * S.tKm;
+  const cL = oreC * S.tOra;
+  const cO = S.conOp ? oreC * S.tOp : 0;
+
+  $('tot').textContent = eur(cKm + cL + cO);
+
+  const t = $('dett');
+  t.innerHTML = '';
+  const riga = (a, b) => {
+    const tr = document.createElement('tr');
+    const td1 = document.createElement('td');
+    const td2 = document.createElement('td');
+    td1.textContent = a; td2.textContent = b;
+    tr.appendChild(td1); tr.appendChild(td2);
+    t.appendChild(tr);
+  };
+  if (S.cliente) riga('Cliente', S.cliente);
+  riga('Km andata+ritorno (' + fonte + ')', km.toFixed(1) + ' km · ' + eur(cKm));
+  riga('Tempo al lavoro', fmt(S.t2 - S.t1) + ' (conteggiate ' + oreC.toFixed(2) + ' h)');
+  riga('Manodopera tua', eur(cL));
+  if (S.conOp) riga('Operaio', eur(cO));
+  $('res').hidden = false;
+}
+
+$('tKm').value = S.tKm || 1;
+$('tOra').value = S.tOra || 40;
+$('tOp').value = S.tOp || 30;
+$('conOp').checked = !!S.conOp;
+$('cliente').value = S.cliente || '';
+if (S.kmMan > 0) $('kmMan').value = S.kmMan;
+ui();
+</script>
+</body>
+</html>
