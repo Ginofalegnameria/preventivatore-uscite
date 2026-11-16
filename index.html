@@ -5,25 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Uscite">
-<meta name="theme-color" content="#F2F2F7">
-<link rel="apple-touch-icon" href="icona.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pialletto d'Oro">
+<meta name="theme-color" content="#FAF8F5">
+<link rel="apple-touch-icon" href="./logo.png">
 <title>Preventivatore Intervento</title>
 <style>
-:root{--bg:#F2F2F7;--card:#FFFFFF;--fg:#1C1C1E;--mut:#6C6C70;--line:#E5E5EA;--blu:#007AFF;--ara:#FF9500;--ver:#34C759;--dark:#1C1C1E}
+:root{--bg:#FAF8F5;--card:#FFFFFF;--fg:#2C221E;--mut:#7A6E66;--line:#EAE3D9;--blu:#C59B27;--ara:#B85D19;--ver:#2E7D32;--dark:#2C221E;--oro:#C59B27}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.35;margin:0 auto;max-width:520px;
   padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-h1{font-size:28px;font-weight:700;letter-spacing:-.02em;margin:4px 4px 14px}
-section{background:var(--card);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.05),0 4px 14px rgba(0,0,0,.05)}
+body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--dark);z-index:5}
+header{text-align:center;margin:2px 0 16px}
+.logo{width:108px;height:56px;margin:0 auto 10px;overflow:hidden;position:relative;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px rgba(44,34,30,.05)}
+.logo img{position:absolute;top:50%;left:50%;width:140px;height:140px;max-width:none;transform:translate(-50%,-50%)}
+.marca{font-size:24px;font-weight:700;letter-spacing:.02em;color:var(--oro);margin-bottom:8px}
+h1{font-size:21px;font-weight:700;letter-spacing:-.01em;color:var(--fg);margin:0}
+h1::after{content:"";display:block;width:48px;height:3px;border-radius:3px;background:var(--oro);margin:9px auto 0}
+section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(44,34,30,.04),0 4px 14px rgba(44,34,30,.06)}
 label{display:block;font-size:13px;color:var(--mut);margin:12px 0 6px}
 input[type=number],input[type=text]{width:100%;min-height:44px;padding:10px 12px;font-size:17px;font-family:inherit;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg);-webkit-appearance:none;appearance:none}
 input[type=number]:focus,input[type=text]:focus{outline:2px solid var(--blu);outline-offset:0;border-color:transparent}
 
 /* stato */
-#stato{display:block;width:fit-content;margin:0 auto 14px;padding:8px 18px;border-radius:999px;background:#E5F1FF;color:#0058B8;font-size:16px;font-weight:700;text-align:center}
+#stato{display:block;width:fit-content;margin:0 auto 14px;padding:8px 18px;border-radius:999px;background:#FBF5E4;color:#2C221E;border:1.5px solid var(--oro);font-size:16px;font-weight:700;text-align:center}
 
 /* pulsanti principali */
 button{display:block;width:100%;min-height:68px;padding:16px;font-family:inherit;font-size:18px;font-weight:700;letter-spacing:.01em;border:0;border-radius:14px;margin-top:12px;cursor:pointer;color:#fff;background:var(--blu);touch-action:manipulation;-webkit-appearance:none;appearance:none;transition:transform .08s,opacity .15s}
@@ -45,9 +51,9 @@ button:disabled{opacity:.3;cursor:default}
 
 /* menu espandibili */
 details{border-top:1px solid var(--line);margin-top:14px}
-summary{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding-top:4px;font-size:16px;color:var(--blu);cursor:pointer;list-style:none}
+summary{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding-top:4px;font-size:16px;color:#8A6A12;cursor:pointer;list-style:none}
 summary::-webkit-details-marker{display:none}
-summary::after{content:"";width:9px;height:9px;margin-right:4px;border-right:2px solid #C7C7CC;border-bottom:2px solid #C7C7CC;transform:rotate(45deg);transition:transform .2s}
+summary::after{content:"";flex:none;width:9px;height:9px;margin:0 4px 0 10px;border-right:2px solid #CFC4B4;border-bottom:2px solid #CFC4B4;transform:rotate(45deg);transition:transform .2s}
 details[open] summary::after{transform:rotate(-135deg)}
 details label{margin-top:4px}
 .row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding-bottom:4px}
@@ -55,20 +61,24 @@ details label{margin-top:4px}
 .row label{margin-top:0;white-space:nowrap;font-size:12px}
 
 /* risultato */
-#res{background:var(--dark);color:#fff;box-shadow:0 6px 20px rgba(0,0,0,.2)}
-#res .note{color:#AEAEB2;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
-.tot{font-size:46px;font-weight:700;letter-spacing:-.02em;text-align:center;margin:6px 0 14px}
+#res{background:var(--dark);border-color:var(--dark);color:#FAF8F5;box-shadow:0 6px 20px rgba(44,34,30,.25)}
+#res .note{color:#EFE6D6;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.tot{color:#E5B84B;font-size:46px;font-weight:700;letter-spacing:-.02em;text-align:center;margin:6px 0 14px}
 table{width:100%;border-collapse:collapse;font-size:15px}
-td{padding:9px 0;border-top:1px solid #3A3A3C;vertical-align:top}
-td:first-child{color:#AEAEB2;padding-right:10px}
+td{padding:9px 0;border-top:1px solid #4A3C35;vertical-align:top}
+td:first-child{color:#CFC4B4;padding-right:10px}
 td:last-child{text-align:right}
-button.ghost{min-height:48px;margin-top:16px;padding:12px;font-size:16px;font-weight:600;background:transparent;color:#fff;border:1px solid #48484A}
+button.ghost{min-height:48px;margin-top:16px;padding:12px;font-size:16px;font-weight:600;background:transparent;color:#FAF8F5;border:1px solid #6B5A50}
 [hidden]{display:none!important}
 </style>
 </head>
 <body>
 
-<h1>Intervento</h1>
+<header>
+  <div class="logo"><img src="./logo.png" alt="Pialletto d'Oro" onerror="this.parentNode.hidden=true;this.parentNode.nextElementSibling.hidden=false"></div>
+  <div class="marca" hidden>Pialletto d'Oro</div>
+  <h1>Preventivatore Intervento</h1>
+</header>
 
 <section>
   <div id="stato">Pronto.</div>
@@ -84,7 +94,7 @@ button.ghost{min-height:48px;margin-top:16px;padding:12px;font-size:16px;font-we
   <input type="text" id="cliente" placeholder="Nome cliente">
 
   <details>
-    <summary>Inserisci km manualmente</summary>
+    <summary>Inserisci km a mano se il GPS non prende</summary>
     <label for="kmMan">Km di sola andata (solo se il GPS non funziona)</label>
     <input type="number" id="kmMan" step="0.1" placeholder="es. 12" inputmode="decimal">
   </details>
