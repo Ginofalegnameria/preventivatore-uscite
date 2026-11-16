@@ -27,7 +27,10 @@ button.b2{background:var(--mid)}
 button.b3{background:var(--end);color:var(--endfg)}
 button.ghost{background:transparent;color:var(--fg);border:1px solid var(--line);font-size:17px;padding:14px;min-height:56px}
 button:disabled{opacity:.3;cursor:default}
-#stato{font-weight:700;margin-bottom:4px}
+#stato{font-weight:700;margin-bottom:4px;text-align:center;font-size:18px}
+.tasti{display:flex;flex-direction:column;justify-content:space-between;min-height:calc(100vh - 32px);min-height:calc(100dvh - 32px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));background:transparent;border:0;padding:0}
+.tasti button{min-height:22vh;font-size:30px;margin:0}
+.tasti .note{text-align:center;min-height:20px}
 .note{font-size:13px;color:var(--mut);line-height:1.5;margin-top:8px}
 .tot{font-size:40px;font-weight:700;text-align:center;margin:4px 0 10px}
 table{width:100%;border-collapse:collapse;font-size:15px}
@@ -38,27 +41,27 @@ td:last-child{text-align:right}
 </head>
 <body>
 
-<h1>Preventivatore Intervento</h1>
+<section class="tasti">
+  <button id="bParti">1. PARTO</button>
+  <div>
+    <div id="stato">Pronto.</div>
+    <button class="b2" id="bArrivo" disabled>2. SONO ARRIVATO</button>
+    <div class="note" id="live"></div>
+  </div>
+  <button class="b3" id="bFine" disabled>3. HO FINITO</button>
+</section>
 
 <section>
-  <div class="row">
+  <div class="row" hidden>
     <div><label for="tKm">€ al km</label><input type="number" id="tKm" value="1" step="0.1" inputmode="decimal"></div>
     <div><label for="tOra">€/ora tu</label><input type="number" id="tOra" value="40" inputmode="decimal"></div>
     <div><label for="tOp">€/ora operaio</label><input type="number" id="tOp" value="30" inputmode="decimal"></div>
   </div>
-  <div class="chk"><input type="checkbox" id="conOp"><label for="conOp">Vado con un operaio</label></div>
+  <div class="chk" style="margin-top:0"><input type="checkbox" id="conOp"><label for="conOp">Vado con un operaio</label></div>
   <label for="cliente">Cliente</label>
   <input type="text" id="cliente" placeholder="Nome cliente">
-</section>
-
-<section>
-  <div id="stato">Pronto.</div>
-  <button id="bParti">1. PARTO</button>
-  <button class="b2" id="bArrivo" disabled>2. SONO ARRIVATO</button>
   <label for="kmMan">Km di sola andata (solo se il GPS non funziona)</label>
   <input type="number" id="kmMan" step="0.1" placeholder="es. 12" inputmode="decimal">
-  <button class="b3" id="bFine" disabled>3. HO FINITO</button>
-  <div class="note" id="live"></div>
 </section>
 
 <section id="res" hidden>
@@ -174,6 +177,7 @@ function mostra() {
   riga('Manodopera tua', eur(cL));
   if (S.conOp) riga('Operaio', eur(cO));
   $('res').hidden = false;
+  $('res').scrollIntoView();
 }
 
 $('tKm').value = S.tKm || 1;
