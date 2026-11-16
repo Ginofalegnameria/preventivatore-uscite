@@ -54,6 +54,7 @@
     <div class="row due">
       <div><label for="tOra">€/ora tuo lavoro</label><input type="number" id="tOra" value="40" min="0" inputmode="decimal"></div>
       <div><label for="tOp">€/ora operaio</label><input type="number" id="tOp" value="30" min="0" inputmode="decimal"></div>
+      <div><label for="tLab">€/ora uso laboratorio</label><input type="number" id="tLab" value="15" min="0" inputmode="decimal"></div>
       <div><label for="tForf">Forfait avviamento macchinari €</label><input type="number" id="tForf" value="10" min="0" inputmode="decimal"></div>
       <div><label for="tMin">Minimo intervento €</label><input type="number" id="tMin" value="15" min="0" inputmode="decimal"></div>
     </div>
@@ -88,7 +89,7 @@ document.querySelectorAll('.nav a').forEach(a => {
 });
 
 // ---- tariffe (salvate a parte: restano tra una lavorazione e l'altra) ----
-const DEF = { tOra: 40, tOp: 30, tForf: 10, tMin: 15 };
+const DEF = { tOra: 40, tOp: 30, tLab: 15, tForf: 10, tMin: 15 };
 let T = Object.assign({}, DEF);
 try { T = Object.assign(T, JSON.parse(localStorage.getItem('tarLab') || 'null') || {}); } catch (e) {}
 Object.keys(DEF).forEach(id => {
@@ -120,12 +121,13 @@ function calcola() {
   const cL = ore * T.tOra;                        // manodopera tua
   const cO = L.conOp ? ore * T.tOp : 0;           // operaio
   const cM = L.mac ? T.tForf : 0;                 // forfait avviamento macchinari
-  let lavoro = cL + cO + cM;
+  const cLab = ore * T.tLab;                      // uso laboratorio (affitto, corrente, affilatura, usura)
+  let lavoro = cL + cO + cLab + cM;
   const minimo = lavoro > 0 && lavoro < T.tMin;   // soglia minima sul lavoro (materiale escluso)
   if (minimo) lavoro = T.tMin;
   const mat = Math.max(0, parseFloat(L.mat) || 0);
   const netto = lavoro + mat;
-  return { ms, cL, cO, cM, minimo, mat, netto, ivaE: netto * 0.22 };
+  return { ms, cL, cO, cLab, cM, minimo, mat, netto, ivaE: netto * 0.22 };
 }
 
 let R = calcola();
@@ -154,6 +156,7 @@ function mostra() {
   riga('Tempo di lavoro', fmt(R.ms));
   riga('Manodopera tua', eur(R.cL));
   if (L.conOp) riga('Operaio', eur(R.cO));
+  if (T.tLab > 0) riga('Uso laboratorio', eur(R.cLab));
   if (L.mac) riga('Avviamento macchinari', eur(R.cM));
   if (R.minimo) riga('Minimo intervento applicato', eur(T.tMin));
   if (R.mat > 0) riga('Materiale', eur(R.mat));
