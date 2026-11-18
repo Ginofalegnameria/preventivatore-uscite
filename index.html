@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Pialletto d'Oro">
 <meta name="theme-color" content="#FAF8F5">
 <link rel="apple-touch-icon" href="./logo.png">
+<link rel="manifest" href="./manifest.json">
 <title>Preventivatore Uscite</title>
 <link rel="stylesheet" href="./stile.css">
 </head>
@@ -290,6 +291,14 @@ if (S.kmMan > 0) $('kmMan').value = S.kmMan;
 $('conIva').checked = !!S.iva;
 $('tel').value = S.tel || '';
 ui();
+</script>
+<script>
+// salva anche quando l'app va in secondo piano o viene chiusa
+addEventListener('pagehide', () => { try { salva(); } catch (e) {} });
+document.addEventListener('visibilitychange', () => { if (document.hidden) { try { salva(); } catch (e) {} } });
+// copia delle pagine sul telefono (apertura senza rete) e memoria da non cancellare
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 </script>
 </body>
 </html>
